@@ -1,4 +1,5 @@
 name: "build-test"
+
 on: # rebuild any PRs and main branch changes
   pull_request:
   push:
@@ -10,24 +11,34 @@ jobs:
     runs-on: macOS-latest
     timeout-minutes: 30
     steps:
-    - uses: actions/checkout@v2
-    - uses: Apple-Actions/import-codesign-certs@v1
+    - name: Checkout Code
+      uses: actions/checkout@v2
+
+    - name: Import Code Signing Certificates
+      uses: Apple-Actions/import-codesign-certs@v1
       with:
         p12-file-base64: ${{ secrets.CERTIFICATES_FILE_BASE64 }}
         p12-password: ${{ secrets.CERTIFICATES_PASSWORD }}
-    - uses: Apple-Actions/download-provisioning-profiles@v1
+
+    - name: Download Provisioning Profiles
+      uses: Apple-Actions/download-provisioning-profiles@v1
       with:
         bundle-id: codes.orj.Example-iOS
         issuer-id: ${{ secrets.APPSTORE_ISSUER_ID }}
         api-key-id: ${{ secrets.APPSTORE_KEY_ID }}
         api-private-key: ${{ secrets.APPSTORE_PRIVATE_KEY }}
+
     - name: "#️⃣ Generate Build Number"
       id: buildnumber
       uses: einaregilsson/build-number@v2
       with:
         token: ${{ secrets.github_token }}
-    - run: ./Build
-    - uses: Apple-Actions/upload-testflight-build@master
+
+    - name: Build
+      run: ./Build
+
+    - name: Upload TestFlight Build
+      uses: Apple-Actions/upload-testflight-build@master
       with:
         app-path: .build/Artifacts/Example-iOS.ipa/Example-iOS.ipa
         issuer-id: ${{ secrets.APPSTORE_ISSUER_ID }}
