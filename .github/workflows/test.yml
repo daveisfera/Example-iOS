@@ -12,16 +12,16 @@ jobs:
     timeout-minutes: 30
     steps:
     - name: Checkout Code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
     - name: Import Code Signing Certificates
-      uses: Apple-Actions/import-codesign-certs@v1
+      uses: Apple-Actions/import-codesign-certs@v3
       with:
         p12-file-base64: ${{ secrets.CERTIFICATES_FILE_BASE64 }}
         p12-password: ${{ secrets.CERTIFICATES_PASSWORD }}
 
     - name: Download Provisioning Profiles
-      uses: Apple-Actions/download-provisioning-profiles@v1
+      uses: Apple-Actions/download-provisioning-profiles@v3
       with:
         bundle-id: codes.orj.Example-iOS
         issuer-id: ${{ secrets.APPSTORE_ISSUER_ID }}
